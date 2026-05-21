@@ -1,0 +1,241 @@
+<div class="report-container">
+
+  <div class="report-header">
+    <h2>📊 Attendance Reports</h2>
+
+    <button class="export-btn"
+    (click)="exportExcel()">
+
+      📗 Export Excel
+
+    </button>
+  </div>
+
+
+  <!-- FILTER SECTION -->
+
+  <div class="filter-box">
+
+    <input
+type="date"
+[(ngModel)]="fromDate">
+
+<input
+type="date"
+[(ngModel)]="toDate">
+
+<input
+type="text"
+[(ngModel)]="searchText"
+(ngModelChange)="search()"
+placeholder="Search By Name & Date...">
+
+<select [(ngModel)]="status">
+
+<option value="">
+All Status
+</option>
+
+<option value="On Time">
+On Time
+</option>
+
+<option value="Late Entry">
+Late Entry
+</option>
+
+</select>
+
+    <button
+    class="search-btn"
+    [disabled]="loading"
+    (click)="search()">
+
+      🔎 Search
+
+    </button>
+
+    <button
+    class="reset-btn"
+    (click)="resetFilter()">
+
+      ↺ Reset
+
+    </button>
+
+  </div>
+
+
+
+  <!-- TABLE -->
+
+ <div class="table-box">
+
+<!-- LOADER -->
+
+<div *ngIf="loading"
+class="loading-container">
+
+<div class="loader"></div>
+
+<p>Loading Reports...</p>
+
+</div>
+
+
+<!-- TABLE -->
+
+<table
+*ngIf="!loading"
+class="report-table">
+
+<thead>
+
+<tr>
+
+<th>Sr.No</th>
+<th>Name</th>
+<th>Date</th>
+<th>Check-In</th>
+<th>Check-Out</th>
+<th>Working Hours</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr *ngFor="
+let x of paginatedData;
+let i=index
+">
+
+<td>
+
+{{((currentPage-1)
+*
+pageSize)+i+1}}
+
+</td>
+
+<td>{{x.name}}</td>
+
+<td>
+
+{{x.date
+| date:'MMM d,y'}}
+
+</td>
+
+<td>
+
+{{x.checkInTime ?
+
+(x.checkInTime
+| date:'shortTime')
+
+:'--'}}
+
+</td>
+
+<td>
+
+{{x.checkOutTime ?
+
+(x.checkOutTime
+| date:'shortTime')
+
+:'--'}}
+
+</td>
+
+<td>
+
+{{(x.workingHours
+?? x.WorkingHours)
+|| '--'}}
+
+</td>
+
+<td>
+
+<!-- <span
+
+[class.late]="x.isLate==1"
+
+[class.ontime]="x.isLate==0">
+
+{{x.isLate==1 ?
+
+'Late Entry' :
+
+'On Time'}}
+
+</span> -->
+<span
+ngClass="{{x.isLate==1 ? 'late':'ontime'}}">
+
+{{x.isLate==1
+? 'Late Entry'
+: 'On Time'}}
+
+</span>
+
+</td>
+
+</tr>
+
+
+<tr *ngIf="paginatedData.length==0">
+
+<td colspan="7">
+
+📂 No Records Found
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+
+<!-- PAGINATION -->
+
+<div
+*ngIf="!loading"
+class="pagination">
+
+<button
+(click)="prevPage()">
+
+⬅ Prev
+
+</button>
+
+<span>
+
+Page
+{{currentPage}}
+
+of
+
+{{totalPages}}
+
+</span>
+
+<button
+(click)="nextPage()">
+
+Next ➡
+
+</button>
+
+</div>
+
+</div>
+
+</div>

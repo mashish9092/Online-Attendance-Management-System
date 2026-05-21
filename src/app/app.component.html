@@ -1,0 +1,30 @@
+<!-- ✅ SIDEBAR -->
+<app-navbar *ngIf="showNavbar"></app-navbar>
+
+<!-- ✅ HEADER -->
+<div *ngIf="showNavbar" class="top-header">
+
+  <div class="title">
+    📊 Online Employee Attendance System
+  </div>
+
+  <div class="right">
+    <span class="welcome">👋 Welcome, {{ userName }}</span>
+
+    <span class="time">
+      {{ currentDateTime }}
+    </span>
+
+    <button class="logout-btn" (click)="logout()">
+      Logout
+    </button>
+  </div>
+
+</div>
+
+<!-- ✅ MAIN CONTENT (VERY IMPORTANT 🔥) -->
+<div [class.full-width]="!showNavbar" class="main-content">
+
+  <router-outlet></router-outlet>
+
+</div>

@@ -1,0 +1,207 @@
+<div class="users-container">
+
+<!-- Header -->
+
+<div class="page-header">
+
+<div class="left">
+
+<button
+class="back-btn"
+type="button"
+routerLink="/dashboard">
+
+← Back
+
+</button>
+
+<h2>👥 Manage Users</h2>
+
+</div>
+
+</div>
+
+
+<!-- Add User -->
+
+<div class="card">
+
+<div class="form-box">
+
+<input
+type="text"
+placeholder="Enter Name"
+[(ngModel)]="user.name"
+name="name">
+
+<input
+type="email"
+placeholder="Enter Email"
+[(ngModel)]="user.email"
+name="email">
+
+<input
+type="password"
+placeholder="Enter Password"
+[(ngModel)]="user.password"
+name="password">
+
+<select
+[(ngModel)]="user.role"
+name="role">
+
+<option value="">
+Select Role
+</option>
+
+<option value="User">
+User
+</option>
+
+<option value="Admin">
+Admin
+</option>
+
+</select>
+
+
+<button
+type="button"
+class="add-btn"
+(click)="saveUser()">
+
+{{isEdit
+?
+'Update User'
+:
+'Add User'}}
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="top-actions">
+
+<div class="search-box">
+
+<input
+type="text"
+placeholder="🔍 Search user..."
+[(ngModel)]="searchText"
+name="search">
+
+</div>
+
+<button
+class="excel-btn"
+type="button"
+(click)="exportToExcel()">
+
+📗 Export To Excel
+
+</button>
+
+</div>
+
+
+<!-- Loader -->
+
+<div
+*ngIf="loading"
+class="loader-container">
+
+<div class="loader"></div>
+
+<p>Loading data...</p>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div
+class="table-box"
+*ngIf="!loading">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Sr.No</th>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr
+*ngFor="
+let u of filteredUsers();
+let i=index
+">
+
+<td>{{i+1}}</td>
+
+<td>{{u.name}}</td>
+
+<td>{{u.email}}</td>
+
+<td>
+
+<span
+[ngClass]="u.role=='Admin'
+?
+'admin'
+:
+'user'">
+
+{{u.role}}
+
+</span>
+
+</td>
+
+<td class="action-column">
+
+<button
+type="button"
+class="edit-btn"
+(click)="editUser(u)">
+
+✏️
+
+</button>
+
+
+<button
+type="button"
+class="delete-btn"
+(click)="deleteUser(u.userId)">
+
+🗑️
+
+</button>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>

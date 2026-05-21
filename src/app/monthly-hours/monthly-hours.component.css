@@ -1,0 +1,247 @@
+.container{
+padding:30px;
+}
+
+.filter-section{
+display:flex;
+gap:15px;
+margin-bottom:25px;
+}
+
+.filter-section select,
+.search-btn{
+
+padding:10px 16px;
+
+border:none;
+
+border-radius:8px;
+
+box-shadow:
+0 2px 8px rgba(0,0,0,.1);
+
+}
+
+.search-btn{
+
+background:#2563eb;
+color:#fff;
+cursor:pointer;
+
+}
+
+.cards{
+
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+margin-bottom:30px;
+
+}
+
+.card{
+
+width:220px;
+padding:30px;
+
+border-radius:15px;
+
+color:white;
+
+text-align:center;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.15);
+
+}
+
+.green{background:#16a34a;}
+.red{background:#dc2626;}
+.orange{background:#f59e0b;}
+.purple{background:#7c3aed;}
+
+.details-section{
+
+background:#fff;
+
+padding:20px;
+
+border-radius:15px;
+
+box-shadow:
+0 4px 15px rgba(0,0,0,.08);
+
+}
+
+.table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+.table th{
+
+background:#1e293b;
+
+color:#fff;
+
+padding:14px;
+
+}
+
+.table td{
+
+padding:14px;
+
+text-align:center;
+
+border-bottom:
+1px solid #eee;
+
+}
+
+.present-badge,
+.late-badge,
+.absent-badge,
+.halfday-badge{
+
+padding:7px 14px;
+
+border-radius:20px;
+
+font-weight:bold;
+
+}
+
+.present-badge{
+background:#dcfce7;
+color:#15803d;
+}
+
+.late-badge{
+background:#fef3c7;
+color:#d97706;
+}
+
+.absent-badge{
+background:#fee2e2;
+color:#dc2626;
+}
+
+.halfday-badge{
+background:#ede9fe;
+color:#7c3aed;
+}
+/* table */
+
+.table{
+
+width:100%;
+
+border-collapse:separate;
+
+border-spacing:0;
+
+overflow:hidden;
+
+border-radius:12px;
+
+border:
+1px solid #e5e7eb;
+
+}
+
+
+.table th{
+
+background:#1e293b;
+
+color:#fff;
+
+padding:15px;
+
+border:
+1px solid #334155;
+
+}
+
+
+.table td{
+
+padding:15px;
+
+text-align:center;
+
+border:
+1px solid #e5e7eb;
+
+transition:.3s;
+
+}
+
+
+/* hover effect */
+
+.table tbody tr:hover{
+
+background:#f8fafc;
+
+transform:scale(1.01);
+
+transition:.3s;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,.08);
+
+}
+
+
+/* zebra rows */
+
+.table tbody tr:nth-child(even){
+
+background:#fafafa;
+
+}
+
+
+/* pagination */
+
+.pagination{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:15px;
+
+margin-top:25px;
+
+}
+
+.pagination button{
+
+padding:10px 18px;
+
+border:none;
+
+border-radius:8px;
+
+background:#2563eb;
+
+color:#fff;
+
+cursor:pointer;
+
+}
+
+.pagination button:disabled{
+
+background:#94a3b8;
+
+cursor:not-allowed;
+
+}

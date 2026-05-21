@@ -1,0 +1,65 @@
+<h2 class="page-title">👑 Welcome Admin Dashboard</h2>
+<div class="search-box">
+  <input
+    type="text"
+    placeholder="Search by name..."
+    [(ngModel)]="searchText"
+  />
+</div>
+<!-- 🔥 CARDS -->
+<div class="card-container">
+
+  <div class="card blue">
+    <h3>Total Users</h3>
+    <p>{{ totalUsers }}</p>
+  </div>
+
+  <div class="card green">
+    <h3>Present Today</h3>
+    <p>{{ present }}</p>
+  </div>
+
+  <div class="card red">
+    <h3>Absent Today</h3>
+    <p>{{ absent }}</p>
+  </div>
+
+  <div class="card orange">
+    <h3>Late Entries</h3>
+    <p>{{ late }}</p>
+  </div>
+
+  <div class="card purple">
+    <h3>Working Hours</h3>
+    <p>{{ hours }}</p>
+  </div>
+
+</div>
+
+<!-- 🔥 QUICK ACTION -->
+<div class="actions">
+  <button (click)="goToUsers()">➕ Add User</button>
+  <button>📤 Export Report</button>
+</div>
+
+<!-- 🔥 RECENT TABLE -->
+<table class="recent-table">
+  <thead>
+    <tr>
+      <th>Sr.No.</th>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Check In</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of filteredData(); let i = index">
+        <td>{{ i + 1 }}</td>
+      <td>{{ item.name }}</td>
+      <td>{{ item.date }}</td>
+      <td>{{ item.checkIn }}</td>
+      <td>{{ item.status }}</td>
+    </tr>
+  </tbody>
+</table>

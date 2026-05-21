@@ -1,0 +1,295 @@
+.users-container{
+padding:20px;
+}
+
+.page-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.back-btn{
+background:#1f2a3a;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+transition:.3s;
+}
+
+.back-btn:hover{
+background:#34495e;
+}
+
+
+/* card */
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 3px 12px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+
+.form-box{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.form-box input,
+.form-box select{
+
+flex:1;
+min-width:180px;
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+
+}
+
+
+/* add button */
+
+.add-btn{
+background:#16a085;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.add-btn:hover{
+background:#13856d;
+}
+
+
+/* search + export */
+
+.top-actions{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+
+}
+
+.search-box{
+margin-bottom:0;
+}
+
+.search-box input{
+
+width:300px;
+padding:10px 15px;
+border-radius:8px;
+border:2px solid #ccc;
+outline:none;
+
+}
+
+.search-box input:focus{
+border-color:#1f2a3a;
+}
+
+
+/* export button */
+
+.excel-btn{
+
+background:#28a745;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+
+}
+
+.excel-btn:hover{
+background:#1e8a37;
+}
+
+
+/* table */
+
+.table-box{
+
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 3px 12px rgba(0,0,0,.1);
+
+border:1px solid #ddd;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+table-layout:fixed;
+
+}
+
+th{
+
+background:#1f2a3a;
+color:white;
+padding:15px;
+
+text-align:center;
+border:1px solid #ddd;
+
+}
+
+
+td{
+
+padding:18px;
+
+text-align:center;
+vertical-align:middle;
+
+border:1px solid #ddd;
+
+}
+
+
+tbody tr{
+
+height:60px;
+
+}
+
+tbody tr:hover{
+background:#f8f9fa;
+}
+
+
+/* action button */
+
+.action-column{
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+
+}
+
+
+.edit-btn{
+
+background:#ffc107;
+border:none;
+padding:10px 12px;
+border-radius:6px;
+cursor:pointer;
+margin:0;
+
+}
+
+.edit-btn:hover{
+
+transform:scale(1.05);
+
+}
+
+
+.delete-btn{
+
+background:#e74c3c;
+border:none;
+padding:10px 12px;
+border-radius:6px;
+cursor:pointer;
+
+}
+
+.delete-btn:hover{
+
+transform:scale(1.05);
+
+}
+
+
+
+/* role badges */
+
+.admin{
+
+background:#d4edda;
+color:green;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+font-weight:bold;
+display:inline-block;
+
+}
+
+.user{
+
+background:#dbeafe;
+color:#2563eb;
+padding:6px 12px;
+border-radius:20px;
+font-size:13px;
+font-weight:bold;
+display:inline-block;
+
+}
+.loader-container{
+
+text-align:center;
+
+padding:30px;
+
+}
+
+.loader{
+
+width:50px;
+
+height:50px;
+
+border:5px solid #ddd;
+
+border-top:5px solid #1f2b3d;
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+margin:auto;
+
+}
+
+@keyframes spin{
+
+0%{
+transform:rotate(0deg);
+}
+
+100%{
+transform:rotate(360deg);
+}
+
+}

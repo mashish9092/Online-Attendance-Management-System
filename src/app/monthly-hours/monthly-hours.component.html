@@ -1,0 +1,186 @@
+<div class="container">
+
+<h1>📊 Monthly Summary</h1>
+
+<div class="filter-section">
+
+<select [(ngModel)]="selectedMonth">
+
+<option
+*ngFor="let m of months; let i=index"
+[value]="i+1">
+
+{{m}}
+
+</option>
+
+</select>
+
+<select [(ngModel)]="selectedYear">
+
+<option
+*ngFor="let y of years"
+[value]="y">
+
+{{y}}
+
+</option>
+
+</select>
+
+<button
+class="search-btn"
+(click)="loadMonthlyData()">
+
+🔍 Search
+
+</button>
+
+</div>
+
+
+<!-- cards -->
+
+<div class="cards">
+
+<div class="card green">
+
+<h3>Present</h3>
+<h2>{{summary?.present || 0}}</h2>
+
+</div>
+
+<div class="card red">
+
+<h3>Absent</h3>
+<h2>{{summary?.absent || 0}}</h2>
+
+</div>
+
+<div class="card orange">
+
+<h3>Late</h3>
+<h2>{{summary?.late || 0}}</h2>
+
+</div>
+
+<div class="card purple">
+
+<h3>Total Hours</h3>
+<h2>{{summary?.totalHours || 0}}</h2>
+
+</div>
+
+</div>
+
+
+<!-- table OUTSIDE cards -->
+
+<div class="details-section">
+
+<h2>📅 Monthly Details</h2>
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+<th>Status</th>
+<th>Working Hours</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr *ngFor="let item of paginatedData">
+
+<td>
+
+{{item.date | date:'dd MMM yyyy'}}
+
+</td>
+
+<td>
+
+<span
+[ngClass]="{
+
+'present-badge':
+item.status=='Present'
+||
+item.status=='On Time',
+
+'late-badge':
+item.status=='Late'
+||
+item.status=='Late Entry',
+
+'absent-badge':
+item.status=='Absent',
+
+'halfday-badge':
+item.status=='Half Day'
+
+}">
+
+{{item.status}}
+
+</span>
+
+</td>
+
+<td>
+
+{{item.hours || 0}}
+
+</td>
+
+</tr>
+
+<tr *ngIf="details.length==0">
+
+<td colspan="3">
+
+No Monthly Data Found ❌
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+<div class="pagination">
+
+<button
+(click)="prevPage()"
+[disabled]="currentPage==1">
+
+⬅ Prev
+
+</button>
+
+<span>
+
+Page {{currentPage}}
+of {{totalPages}}
+
+</span>
+
+<button
+(click)="nextPage()"
+[disabled]="currentPage==totalPages">
+
+Next ➡
+
+</button>
+
+</div>
+
+</div>
+
+</div>
