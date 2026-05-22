@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 export class AttendanceService {
 
   // Base URL
-  private apiUrl = 'https://localhost:44336/api/attendance';
+ private apiUrl = `${environment.baseUrl}/attendance`;
 
   constructor(
     private http: HttpClient
@@ -100,31 +101,31 @@ export class AttendanceService {
 
   getProfile(userId:number): Observable<any>{
 
-    return this.http.get<any>(
-`https://localhost:44336/api/users/profile/${userId}`
-    );
+return this.http.get<any>(
+`${environment.baseUrl}/users/profile/${userId}`
+);
 
   }
 
 
   updateProfile(data:any): Observable<any>{
 
-    return this.http.put<any>(
-`https://localhost:44336/api/users/update-profile`,
-      data
-    );
+return this.http.put<any>(
+`${environment.baseUrl}/users/update-profile`,
+data
+);
 
   }
   changePassword(data:any){
 return this.http.put(
-'https://localhost:44336/api/users/change-password',
+`${environment.baseUrl}/users/change-password`,
 data
 );
 }
 getActivity(){
 
 return this.http.get(
-'https://localhost:44336/api/activity'
+`${environment.baseUrl}/activity`
 );
 
 }

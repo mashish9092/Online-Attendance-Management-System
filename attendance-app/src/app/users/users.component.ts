@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-users',
@@ -10,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
+  apiUrl = `${environment.baseUrl}/Users`;
 
   constructor(private http: HttpClient, private toastr:ToastrService) {}
 
@@ -22,9 +24,6 @@ export class UsersComponent implements OnInit {
   isEdit = false;
 
   loading = false;
-
-  apiUrl = 'https://localhost:44336/api/Users';
-
 
   ngOnInit(): void {
 

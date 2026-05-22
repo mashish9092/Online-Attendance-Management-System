@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
 selector:'app-monthly-hours',
@@ -16,7 +17,7 @@ currentPage=1;
 pageSize=5;
 
 
-baseUrl='https://localhost:44336/api';
+baseUrl = environment.baseUrl;
 
 months=[
 'January',

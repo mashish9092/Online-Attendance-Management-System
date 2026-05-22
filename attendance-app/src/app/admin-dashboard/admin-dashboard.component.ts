@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Chart } from 'chart.js/auto';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -8,6 +9,7 @@ import { Chart } from 'chart.js/auto';
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
+  baseUrl = environment.baseUrl;
 
   // ================= VARIABLES =================
   dashboard: any = {};
@@ -70,7 +72,7 @@ totalUsers=0;
 loadUsersCount(){
 
 this.http.get<any[]>(
-'https://localhost:44336/api/Users'
+`${this.baseUrl}/Users`
 )
 .subscribe({
 
@@ -103,7 +105,9 @@ err
 }
 
 loadActivity() {
-  this.http.get<any>('https://localhost:44336/api/attendance/today')
+  this.http.get<any>(
+`${this.baseUrl}/attendance/today`
+)
     .subscribe(res => {
 
       this.activityList = res.map((x: any) => ({
@@ -184,7 +188,7 @@ this.dashboard
  loadTodayAttendance() {
 
 this.http.get<any[]>(
-'https://localhost:44336/api/attendance/today'
+`${this.baseUrl}/attendance/today`
 )
 
 .subscribe({
@@ -459,7 +463,9 @@ exportToExcel() {
     this.pieChart.update();
   }
   loadWeeklyData() {
-  this.http.get<any[]>('https://localhost:5001/api/dashboard/weekly')
+ this.http.get<any[]>(
+`${this.baseUrl}/dashboard/weekly`
+)
     .subscribe(res => {
       this.weeklyData = res;
 

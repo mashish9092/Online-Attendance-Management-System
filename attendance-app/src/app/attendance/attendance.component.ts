@@ -5,6 +5,7 @@ import { AttendanceService } from '../services/attendance.service';
 import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 export class AttendanceComponent implements OnInit {
 
   // 🔥 BASE URL (IMPORTANT)
-  baseUrl = 'https://localhost:44336/api';
+baseUrl = environment.baseUrl;
 
   data: any[] = [];
   userName: string = '';
