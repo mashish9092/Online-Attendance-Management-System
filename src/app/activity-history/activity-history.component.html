@@ -1,0 +1,160 @@
+<button
+(click)="goBack()"
+class="back-btn">
+
+← Back to Dashboard
+
+</button>
+
+<div class="activity-container">
+
+<div class="header-row">
+
+<h2>
+📋 Full Activity History
+</h2>
+
+<input
+type="text"
+placeholder="🔍 Search Name / Status / Date..."
+[(ngModel)]="searchText"
+(input)="search()"
+class="search-box"
+/>
+
+</div>
+
+
+<div class="filter-row">
+
+<input
+type="date"
+[(ngModel)]="selectedDate"
+(change)="applyFilters()"
+class="filter-input">
+
+
+<select
+[(ngModel)]="selectedStatus"
+(change)="applyFilters()"
+class="filter-input">
+
+<option value="">
+All Status
+</option>
+
+<option value="On Time">
+On Time
+</option>
+
+<option value="Late">
+Late
+</option>
+
+<option value="Absent">
+Absent
+</option>
+
+<option value="Half Day">
+Half Day
+</option>
+
+</select>
+<button
+class="reset-btn"
+(click)="resetFilters()">
+
+↺ Reset
+
+</button>
+</div>
+
+<div class="timeline">
+
+  <div
+    *ngFor="let item of paginatedData"
+    class="timeline-card"
+
+    [ngClass]="{
+      'present': item.status=='Present' || item.status=='On Time',
+      'late': item.status=='Late',
+      'absent': item.status=='Absent',
+      'halfday': item.status=='Half Day'
+    }">
+
+    <div class="left-icon">
+
+      <span *ngIf="item.status=='Present' || item.status=='On Time'">
+        ✅
+      </span>
+
+      <span *ngIf="item.status=='Late'">
+        ⏰
+      </span>
+
+      <span *ngIf="item.status=='Absent'">
+        ❌
+      </span>
+
+      <span *ngIf="item.status=='Half Day'">
+        ⚠️
+      </span>
+
+    </div>
+
+    <div class="content">
+
+      <div class="top-row">
+
+        <b>{{item.name}}</b>
+
+        <span class="status">
+          {{item.status}}
+        </span>
+
+      </div>
+
+      <div class="bottom-row">
+
+        🕒 {{item.time | date:'dd MMM yyyy • hh:mm a'}}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="pagination">
+
+<button
+(click)="prevPage()"
+[disabled]="currentPage==1">
+
+⬅ Prev
+
+</button>
+
+
+<span>
+
+Page {{currentPage}}
+of
+{{totalPages}}
+
+</span>
+
+
+<button
+(click)="nextPage()"
+[disabled]="currentPage==totalPages">
+
+Next ➡
+
+</button>
+
+</div>
+
+</div>

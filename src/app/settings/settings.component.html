@@ -1,0 +1,78 @@
+<div class="settings-container">
+
+<h2>⚙ Settings</h2>
+
+<div class="settings-card">
+
+<h3>👤 Profile Details</h3>
+
+<div class="form-group">
+<label>Name</label>
+
+<input
+type="text"
+[(ngModel)]="user.name">
+</div>
+
+<div class="form-group">
+<label>Email</label>
+
+<input
+type="email"
+[(ngModel)]="user.email">
+</div>
+
+<div class="form-group">
+<label>Role</label>
+
+<input
+type="text"
+[(ngModel)]="user.role"
+disabled>
+</div>
+
+<hr>
+
+<h3>🔒 Change Password</h3>
+
+<div class="form-group">
+<label>Old Password</label>
+
+<input
+type="password"
+[(ngModel)]="password.oldPassword">
+</div>
+
+<div class="form-group">
+<label>New Password</label>
+
+<input
+type="password"
+[(ngModel)]="password.newPassword">
+</div>
+
+<div class="form-group">
+<label>Confirm Password</label>
+
+<input
+type="password"
+[(ngModel)]="password.confirmPassword">
+</div>
+
+
+<input
+type="hidden"
+[(ngModel)]="user.userId">
+
+<button
+type="button"
+class="save-btn"
+(click)="saveSettings()">
+
+💾 Save Changes
+
+</button>
+
+</div>
+
+</div>

@@ -1,0 +1,83 @@
+.page-title {
+  margin-bottom: 20px;
+}
+
+/* CARDS */
+.card-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  min-width: 180px;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+}
+
+.blue { background: #3498db; }
+.green { background: #2ecc71; }
+.red { background: #e74c3c; }
+.orange { background: #f39c12; }
+.purple { background: #8e44ad; }
+
+/* ACTIONS */
+.actions {
+  margin: 20px 0;
+}
+
+.actions button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  border: none;
+  background: #1abc9c;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* TABLE */
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-table th,
+.recent-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.recent-table th {
+  background: #1f2a3a;
+  color: white;
+  padding: 10px;
+}
+
+/* SEARCH */
+.search-box {
+  margin: 15px 0;
+}
+
+.search-box input {
+  width: 250px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+/* DATA */
+.recent-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+/* 🔥 HOVER EFFECT */
+.recent-table tbody tr:hover {
+  background: #f5f5f5;
+  cursor: pointer;
+  transform: scale(1.01);
+  transition: 0.2s;
+}

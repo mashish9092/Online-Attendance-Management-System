@@ -1,0 +1,76 @@
+<div class="sidebar">
+
+  <!-- LOGO -->
+  <div class="logo">
+    <img src="assets/bg-removed.png" alt="logo">
+  </div>
+
+  <!-- MENU -->
+  <ul>
+
+    <!-- 👑 ADMIN -->
+    <ng-container *ngIf="role === 'Admin'">
+
+      <li [routerLink]="'/admin'" routerLinkActive="active">
+        🏠 Dashboard
+      </li>
+
+      <li [routerLink]="'/attendance'" routerLinkActive="active">
+        📅 Attendance
+      </li>
+
+      <li [routerLink]="'/reports'" routerLinkActive="active">
+        📊 Reports
+      </li>
+
+      <li [routerLink]="'/users'" routerLinkActive="active">
+        👥 Manage Users
+      </li>
+
+    </ng-container>
+
+    <!-- 👤 USER -->
+    <ng-container *ngIf="role === 'User'">
+
+      <li [routerLink]="'/attendance'" routerLinkActive="active">
+        📅 My Attendance
+      </li>
+
+      <li [routerLink]="'/profile'" routerLinkActive="active">
+        👤 Profile
+      </li>
+
+    </ng-container>
+
+    <!-- 🔥 COMMON -->
+    <li [routerLink]="'/settings'" routerLinkActive="active">
+      ⚙️ Settings
+    </li>
+
+    <!-- ❗ IMPORTANT FIX -->
+    <li (click)="logout()" class="logout">
+      🚪 Logout
+    </li>
+
+  </ul>
+
+  <!-- 🔻 FOOTER -->
+  <div class="bottom-info">
+
+    <div class="user">
+      👤 {{ userName || 'Guest' }}
+    </div>
+
+    <div 
+      class="role" 
+      [ngClass]="role === 'Admin' ? 'admin' : 'user'">
+      🔐 {{ role || 'User' }}
+    </div>
+
+    <div class="time">
+      {{ currentDateTime }}
+    </div>
+
+  </div>
+
+</div>

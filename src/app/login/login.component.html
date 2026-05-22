@@ -1,0 +1,30 @@
+<div class="login-container">
+
+  <div class="login-card">
+
+    <div class="logo">📊</div>
+
+    <h2>🔐 Welcome To Employee Attendance System</h2>
+    <p class="subtitle">Login to your account</p>
+
+    <div class="input-group">
+      <input 
+        type="email" 
+        [(ngModel)]="email" 
+        name="email"
+        placeholder="Enter Email">
+    </div>
+
+    <div class="input-group">
+      <input 
+        type="password" 
+        [(ngModel)]="password" 
+        name="password"
+        placeholder="Enter Password">
+    </div>
+
+    <button class="login-btn" (click)="login()">Login</button>
+
+  </div>
+
+</div>

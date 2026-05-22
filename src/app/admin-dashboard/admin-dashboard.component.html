@@ -1,0 +1,196 @@
+<div class="admin-container">
+
+  <!-- 🔥 HEADER -->
+  <h2 class="title">👑 Admin Dashboard</h2>
+
+  <!-- 🟦 WELCOME CARD -->
+  <div class="card welcome-card">
+    <div>
+      <h3>Welcome Admin</h3>
+      <p>Track employee attendance, manage users, and monitor daily reports in one place.</p>
+    </div>
+  </div>
+
+  <!-- 🔘 ACTION BUTTONS -->
+  <div class="actions">
+    <button routerLink="/users">👥 Manage Users</button>
+    <button routerLink="/attendance">📅 View Attendance</button>
+  </div>
+  <br>
+
+  <!-- 📊 DASHBOARD CARDS -->
+  <div class="cards">
+    <div class="card stat-card blue">
+      <h4>Total Users</h4>
+      <p>{{ dashboard.totalUsers }}</p>
+    </div>
+
+    <div class="card stat-card green">
+      <h4>Present Today</h4>
+      <p>{{ dashboard.presentToday }}</p>
+    </div>
+
+    <div class="card stat-card red">
+      <h4>Absent Today</h4>
+      <p>{{ dashboard.absentToday }}</p>
+    </div>
+
+    <div class="card stat-card orange">
+      <h4>Late Entries</h4>
+      <p>{{ dashboard.lateCount }}</p>
+    </div>
+
+    <div class="card stat-card purple">
+       <h4>Working Hours</h4>
+
+  <p>
+    {{
+      dashboard?.workingHoursToday
+      ||
+      dashboard?.workingHours
+      ||
+      '00:00'
+    }}
+  </p>
+    </div>
+  </div>
+
+  <!-- 🔥 MIDDLE SECTION -->
+  <div class="middle-section">
+
+    <!-- 📊 CHART -->
+   <div class="chart-grid">
+
+  <!-- BAR CHART -->
+  <div class="chart-box">
+    <h3>📊 Attendance Trend</h3>
+    <canvas id="barChart"></canvas>
+  </div>
+
+  <!-- PIE CHART -->
+  <div class="chart-box">
+    <h3>🥧 Attendance Ratio</h3>
+    <canvas id="pieChart"></canvas>
+  </div>
+
+</div>
+
+    <!-- ⚡ ACTIVITY (FIXED) -->
+    <div class="activity-box">
+      <h3>⚡ Today's Activity</h3>
+
+      <div *ngFor="let item of activityList"
+           class="activity-item"
+           [ngClass]="{
+             'present': item.status === 'Present',
+             'late': item.status === 'Late',
+             'absent': item.status === 'Absent'
+           }">
+
+        <span class="icon">
+          {{ item.status === 'Present' ? '✅' : item.status === 'Late' ? '⏰' : '❌' }}
+        </span>
+
+        {{ item.time | date:'hh:mm a' }} - {{ item.name }} marked {{ item.status }}
+
+      </div>
+
+   <!-- <button class="view-all" routerLink="/activity">
+  View All Activity →
+</button> -->
+<button class="view-all-btn" routerLink="/activity">
+  View All Activity →
+</button>
+    </div>
+
+    <!-- ⚙️ QUICK ACTIONS -->
+    <div class="quick-box">
+      <h3>⚙️ Quick Actions</h3>
+
+      <div class="action-item" routerLink="/users">👥 Manage Users</div>
+      <div class="action-item" routerLink="/attendance">📅 View Attendance</div>
+      <div class="action-item" routerLink="/reports">📊 Reports</div>
+      <div class="action-item" (click)="exportToExcel()">📥 Export Data</div>
+      <div class="action-item" routerLink="/settings">⚙️ Settings</div>
+    </div>
+
+  </div>
+
+ <!-- 🔍 SEARCH + EXPORT (IMPROVED UI) -->
+<div class="search-row">
+
+  <!-- SEARCH BOX -->
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input 
+      type="text" 
+      placeholder="Search employee..."
+      [(ngModel)]="searchText"
+      (input)="search()"
+    />
+  </div>
+
+  <!-- EXPORT BUTTON -->
+  <button (click)="exportToExcel()" class="export-btn">
+    📥 Export Data
+  </button>
+
+</div>
+
+  <!-- 📋 TABLE -->
+<div class="table-container">
+  <h3>📋 Today's Attendance</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sr.No</th>
+
+        <!-- 🔥 SORTING ENABLE -->
+        <th (click)="sortData('name')">Name ⬍</th>
+        <th>Date</th>
+        <th (click)="sortData('checkInTime')">Check In ⬍</th>
+        <th>Working Hours</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <!-- ❌ NO DATA -->
+      <tr *ngIf="!attendanceList || attendanceList.length === 0">
+        <td colspan="6">No attendance data for today ❌</td>
+      </tr>
+
+      <!-- ✅ DATA -->
+      <tr *ngFor="let item of paginatedData; let i = index">
+
+        <!-- 🔥 FIXED SR.NO -->
+        <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+
+        <td>{{ item.name }}</td>
+        <td>{{ item.date | date:'dd MMM yyyy' }}</td>
+        <td>{{ item.checkInTime | date:'hh:mm a' }}</td>
+        <td>{{ item.workingHours }}</td>
+
+        <td>
+          <span [ngClass]="item.isLate ? 'late' : 'ontime'">
+            {{ item.isLate ? 'Late' : 'On Time' }}
+          </span>
+        </td>
+
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- 🔽 PAGINATION -->
+  <div class="pagination">
+    <button (click)="prevPage()">⬅ Prev</button>
+    <span>Page {{currentPage}}</span>
+    <button (click)="nextPage()">Next ➡</button>
+  </div>
+
+</div>
+
+</div>
