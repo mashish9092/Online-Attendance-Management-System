@@ -23,6 +23,9 @@ baseUrl = environment.baseUrl;
   isCheckedIn = false;
   checkInTime: any;
   workingHours = '00:00';
+  todayCheckIn:any='--:--';
+todayCheckOut:any='--:--';
+todayStatus:any='--';
   attendanceList: any[] = []; 
   dashboard: any = {
     totalUsers: 0,
@@ -30,6 +33,7 @@ baseUrl = environment.baseUrl;
     absentToday: 0,
     lateCount: 0,
     workingHoursToday: '00:00'
+    
   };
 
   monthlyHours: any = 0;
@@ -199,7 +203,7 @@ return;
 this.userName = user?.name;
 
 
-this.markAbsent();     // 🔥 NEW
+// this.markAbsent();     // 🔥 NEW
 
 this.refreshData();
 this.loadData(userId);
@@ -242,10 +246,67 @@ console.log(err);
 
     this.http.get<any[]>(`${this.baseUrl}/attendance/list/${userId}`)
       .subscribe({
-        next: (res) => {
-          console.log("USER LIST:", res);
-          this.data = res;
-        },
+       next:(res)=>{
+
+console.log("USER LIST:",res);
+
+this.data=res;
+
+
+// 🔥 Latest attendance top row
+if(this.data.length>0)
+{
+const latest=this.data[0];
+
+this.todayCheckIn=
+
+latest.checkInTime
+
+?
+
+new Date(
+latest.checkInTime
+)
+.toLocaleTimeString(
+[],
+{
+hour:'2-digit',
+minute:'2-digit'
+}
+)
+
+:
+
+'--:--';
+
+
+this.todayCheckOut=
+
+latest.checkOutTime
+
+?
+
+new Date(
+latest.checkOutTime
+)
+.toLocaleTimeString(
+[],
+{
+hour:'2-digit',
+minute:'2-digit'
+}
+)
+
+:
+
+'--:--';
+
+
+this.todayStatus=
+latest.status || '--';
+}
+
+},
         error: (err) => {
           console.log("LIST ERROR:", err);
         }
@@ -292,6 +353,17 @@ this.toastr.success(
 res.message,
 'Success'
 );
+
+if(
+res.message.includes(
+'Previous attendance auto closed'
+))
+{
+this.toastr.warning(
+'Yesterday checkout was missing and auto closed',
+'Attendance Alert'
+);
+}
 
 this.checkInTime=
 new Date(res.checkInTime);
@@ -399,15 +471,28 @@ err.error || 'Check Out Failed',
   }
 
   // ✅ DASHBOARD (dummy)
-  loadDashboard() {
-    this.dashboard = {
-      totalUsers: 4,
-      presentToday: 1,
-      absentToday: 3,
-      lateCount: 1,
-      workingHoursToday: '03:45'
-    };
-  }
+ loadDashboard(){
+
+this.http.get<any>(
+`${this.baseUrl}/attendance/dashboard`
+)
+.subscribe({
+
+next:(res)=>{
+
+this.dashboard=res;
+
+},
+
+error:(err)=>{
+
+console.log(err);
+
+}
+
+});
+
+}
   getMonthlyHours() {
   console.log("Monthly Hours clicked");
 

@@ -43,3 +43,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+# Ignore Angular cache
+.angular/
+
+# Visual Studio
+.vs/
+bin/
+obj/

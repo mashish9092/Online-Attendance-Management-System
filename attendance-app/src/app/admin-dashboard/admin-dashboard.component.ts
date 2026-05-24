@@ -35,38 +35,47 @@ totalUsers=0;
   constructor(private http: HttpClient) {}
 
   // ================= INIT =================
-  ngOnInit() {
+ngOnInit() {
 
-  //LOAD INITIAL DATA
+  // 🔥 Initial load
   this.loadDashboard();
+
   this.loadTodayAttendance();
-  this.loadUsersCount();
-  this.loadActivity();   
 
-  // CHART INIT (DOM ready hone ke baad)
+  this.loadActivity();
+
+  this.loadWeeklyData();
+
+  // Charts init
   setTimeout(() => {
+
     this.initBarChart();
+
     this.initPieChart();
-  }, 500);
 
-  //AUTO REFRESH (SAFE VERSION)
-  this.intervalId = setInterval(() => {
+  },500);
 
-    // ❗ IMPORTANT: search ke time reload mat karo
-    if (!this.searchText) {
+  // Auto refresh
+  this.intervalId =
+  setInterval(()=>{
+
+    if(!this.searchText){
 
       this.loadDashboard();
-      this.loadTodayAttendance();
-      this.loadActivity();   // ✅ activity bhi refresh hogi
 
-      // charts update
-      this.updateBarChart();
-      this.updatePieChart();
+      this.loadTodayAttendance();
+
+      this.loadActivity();
+
       this.loadWeeklyData();
+
+      this.updateBarChart();
+
+      this.updatePieChart();
 
     }
 
-  }, 10000); // 10 sec
+  },10000);
 
 }
 loadUsersCount(){
@@ -105,22 +114,27 @@ err
 }
 
 loadActivity() {
-  this.http.get<any>(
-`${this.baseUrl}/attendance/today`
+
+this.http.get<any[]>(
+`${this.baseUrl}/attendance/activity`
 )
-    .subscribe(res => {
 
-      this.activityList = res.map((x: any) => ({
-        name: x.name,
-        time: x.checkInTime,
-        status: x.isLate
-          ? 'Late'
-          : (x.checkInTime ? 'Present' : 'Absent')
-      }));
+.subscribe({
 
-    }, err => {
-      console.error("Activity API Error:", err);
-    });
+next:(res)=>{
+
+this.activityList=res;
+
+},
+
+error:(err)=>{
+
+console.log(err);
+
+}
+
+});
+
 }
   // ================= DESTROY =================
   ngOnDestroy() {
@@ -138,54 +152,57 @@ loadActivity() {
   //       error: (err) => console.error(err)
   //     });
   // }
- loadDashboard() {
+loadDashboard() {
 
-const total =
-this.attendanceList.length;
+this.http.get<any>(
+`${this.baseUrl}/attendance/dashboard`
+)
 
-const late =
-this.attendanceList.filter(
-(x:any)=>x.isLate
-).length;
+.subscribe({
 
-const present =
-total-late;
+next:(res)=>{
 
-const working =
-this.attendanceList.find(
-(x:any)=>x.workingHours &&
-x.workingHours!='--'
-);
-
-this.dashboard={
+this.dashboard = {
 
 totalUsers:
-this.totalUsers,
+res.totalUsers,
 
 presentToday:
-present,
+res.presentToday,
 
 lateCount:
-late,
+res.lateCount,
 
 absentToday:
-0,
+res.absentToday,
 
 workingHoursToday:
-working?.workingHours
-|| '00:00'
+res.workingHours
 
 };
 
 console.log(
-'Dashboard:',
+'Dashboard API:',
 this.dashboard
+);
+
+},
+
+error:(err)=>{
+
+console.log(
+'Dashboard Error:',
+err
 );
 
 }
 
+});
+
+}
+
   // ================= ATTENDANCE =================
- loadTodayAttendance() {
+loadTodayAttendance() {
 
 this.http.get<any[]>(
 `${this.baseUrl}/attendance/today`
@@ -200,21 +217,21 @@ console.log(
 res
 );
 
-this.attendanceList=res;
-this.allAttendance=res;
+// safety filter
+this.attendanceList = res;
 
-// 🔥 Dashboard yaha call karo
-this.loadDashboard();
+this.allAttendance =
+this.attendanceList;
 
-// charts bhi refresh
 this.updateBarChart();
+
 this.updatePieChart();
 
 },
 
 error:(err)=>{
 
-console.error(
+console.log(
 "API Error:",
 err
 );

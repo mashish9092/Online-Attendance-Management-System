@@ -22,9 +22,80 @@ routerLink="/dashboard">
 </div>
 
 
-<!-- Add User -->
 
-<div class="card">
+<!-- SEARCH + ACTIONS -->
+<!-- TOP ACTIONS -->
+
+<div class="top-actions">
+
+<div class="search-box">
+
+<input
+type="text"
+placeholder="🔍 Search user..."
+[(ngModel)]="searchText"
+name="searchUser"
+/>
+
+</div>
+
+
+<div class="right-actions">
+
+<button
+class="add-btn"
+(click)="openPopup()">
+
+➕ Add User
+
+</button>
+
+
+<button
+class="excel-btn"
+(click)="exportToExcel()">
+
+📗 Export To Excel
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- POPUP -->
+
+<div
+class="popup-overlay"
+*ngIf="showPopup">
+
+<div class="popup-box">
+
+<div class="popup-header">
+
+<h2>
+
+{{isEdit
+?
+'✏ Update User'
+:
+'➕ Add User'}}
+
+</h2>
+
+
+<button
+class="close-btn"
+(click)="closePopup()">
+
+✖
+
+</button>
+
+</div>
+
 
 <div class="form-box">
 
@@ -44,7 +115,10 @@ name="email">
 type="password"
 placeholder="Enter Password"
 [(ngModel)]="user.password"
-name="password">
+name="password"
+autocomplete="new-password"
+[ngModelOptions]="{standalone:true}"
+/>
 
 <select
 [(ngModel)]="user.role"
@@ -64,17 +138,20 @@ Admin
 
 </select>
 
+</div>
+
+
+<div class="popup-footer">
 
 <button
-type="button"
-class="add-btn"
+class="save-btn"
 (click)="saveUser()">
 
 {{isEdit
 ?
 'Update User'
 :
-'Add User'}}
+'Save User'}}
 
 </button>
 
@@ -82,31 +159,8 @@ class="add-btn"
 
 </div>
 
-
-<!-- SEARCH -->
-
-<div class="top-actions">
-
-<div class="search-box">
-
-<input
-type="text"
-placeholder="🔍 Search user..."
-[(ngModel)]="searchText"
-name="search">
-
 </div>
 
-<button
-class="excel-btn"
-type="button"
-(click)="exportToExcel()">
-
-📗 Export To Excel
-
-</button>
-
-</div>
 
 
 <!-- Loader -->
@@ -120,6 +174,7 @@ class="loader-container">
 <p>Loading data...</p>
 
 </div>
+
 
 
 <!-- TABLE -->
@@ -161,11 +216,13 @@ let i=index
 <td>
 
 <span
-[ngClass]="u.role=='Admin'
+[ngClass]="
+u.role=='Admin'
 ?
 'admin'
 :
-'user'">
+'user'
+">
 
 {{u.role}}
 
@@ -176,7 +233,6 @@ let i=index
 <td class="action-column">
 
 <button
-type="button"
 class="edit-btn"
 (click)="editUser(u)">
 
@@ -186,7 +242,6 @@ class="edit-btn"
 
 
 <button
-type="button"
 class="delete-btn"
 (click)="deleteUser(u.userId)">
 

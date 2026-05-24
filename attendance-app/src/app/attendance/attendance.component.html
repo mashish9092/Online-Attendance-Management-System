@@ -1,35 +1,78 @@
+<!-- Attendance Status Panel -->
 
-<div class="card-container">
+<div class="attendance-panel">
 
-  <div class="card blue">
-    <h3>Total Users</h3>
-    <h2>{{dashboard.totalUsers}}</h2>
-  </div>
+<h2 class="panel-title">
+📋 Attendance Status
+</h2>
 
-  <div class="card green">
-    <h3>Present Today</h3>
-    <h2>{{dashboard.presentToday}}</h2>
-  </div>
+<div class="status-row">
 
-  <div class="card red">
-    <h3>Absent Today</h3>
-    <h2>{{dashboard?.absentToday}}</h2>
-  </div>
+<div class="status-item">
 
-  <!-- NEW -->
- <div class="card orange">
-  <h3>Late Entry</h3>
-  <h2>{{dashboard?.lateCount}}</h2>
-</div>
+<span>
+🕒 Check-In
+</span>
 
-<div class="card purple">
-  <h3>Working Hours</h3>
-  <h2>{{dashboard?.workingHoursToday}}</h2>
-</div>
+<b>
+{{todayCheckIn || '--:--'}}
+</b>
 
 </div>
 
-<div class="action-row">
+
+<div class="status-item">
+
+<span>
+🕔 Check-Out
+</span>
+
+<b>
+{{todayCheckOut || '--:--'}}
+</b>
+
+</div>
+
+</div>
+
+
+<div class="status-row">
+
+<div class="status-item">
+
+<span>
+⏱ Working Hours
+</span>
+
+<b>
+{{dashboard.workingHours}}
+</b>
+
+</div>
+
+
+<div class="status-item">
+
+<span>
+📊 Status
+</span>
+
+<b>
+{{todayStatus || '--'}}
+</b>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- NEW TOOLBAR -->
+
+<div class="toolbar">
+
+<div class="left-tools">
 
 <button
 class="back-btn"
@@ -39,29 +82,6 @@ class="back-btn"
 
 </button>
 
-<div class="attendance-actions">
-
-<button class="checkin-btn" (click)="checkIn()">
-✓ Check In
-</button>
-
-<button class="checkout-btn" (click)="checkOut()">
-✕ Check Out
-</button>
-
-<button
-class="btn btn-success"
-(click)="openMonthlyHours()">
-
-📊 Monthly Hours
-
-</button>
-
-</div>
-
-</div>
-
-<div class="top-actions">
 
 <div class="search-box">
 
@@ -72,42 +92,94 @@ placeholder="🔍 Search by Name or Date..."
 
 </div>
 
+</div>
+
+
+
+<div class="right-tools">
+
+<button
+class="checkin-btn"
+(click)="checkIn()">
+
+✓ Check In
+
+</button>
+
+
+<button
+class="checkout-btn"
+(click)="checkOut()">
+
+✕ Check Out
+
+</button>
+
+
+<button
+class="month-btn"
+(click)="openMonthlyHours()">
+
+📊 Monthly Hours
+
+</button>
+
+
 <button
 class="export-btn"
 (click)="exportAttendanceExcel()">
 
-📗 Export To Excel
+📗 Export
 
 </button>
 
 </div>
 
-<!-- Table -->
+</div>
+
+
+
+<!-- TABLE -->
+
 <table class="table">
-  <thead>
-    <tr>
-      <th>Sr.No</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Date</th>
-      <th>Check-In</th>
-      <th>Check-Out</th>
-      <th>Working Hours</th> 
+
+<thead>
+
+<tr>
+
+<th>Sr.No</th>
+<th>Name</th>
+<th>Email</th>
+<th>Date</th>
+<th>Check-In</th>
+<th>Check-Out</th>
+<th>Working Hours</th>
 <th>Status</th>
-    </tr>
-  </thead>
 
- <tbody>
+</tr>
 
-<tr *ngFor="let item of paginatedData; let i=index">
+</thead>
+
+
+<tbody>
+
+<tr
+*ngFor="
+let item of paginatedData;
+let i=index
+">
 
 <td>
-{{ ((currentPage-1)*pageSize)+i+1 }}
+{{((currentPage-1)*pageSize)+i+1}}
 </td>
 
-<td>{{item.name}}</td>
+<td>
+{{item.name}}
+</td>
 
-<td>{{item.email}}</td>
+<td>
+{{item.email}}
+</td>
 
 <td>
 {{item.date | date:'MMM d, y'}}
@@ -115,41 +187,51 @@ class="export-btn"
 
 <td>
 
-{{item.checkInTime
+{{
+item.checkInTime
 ?
 (item.checkInTime | date:'shortTime')
 :
-'--'}}
+'--'
+}}
 
 </td>
+
 
 <td>
 
-{{item.checkOutTime
+{{
+item.checkOutTime
 ?
 (item.checkOutTime | date:'shortTime')
 :
-'--'}}
+'--'
+}}
 
 </td>
+
 
 <td>
 
 {{item.workingHours || '--'}}
 
 </td>
-<td>
+
+
+<td class="status-cell">
 
 <span
+class="status-badge"
+
 [ngClass]="{
+
+'ontime':
+item.status=='On Time'
+||
+item.status=='Present',
 
 'late':
 item.status=='Late',
-
-'ontime':
-item.status=='Present'
-||
-item.status=='On Time',
 
 'absent':
 item.status=='Absent',
@@ -159,36 +241,19 @@ item.status=='Half Day'
 
 }">
 
-<td class="status-cell">
-
-<span
-class="status-badge"
-
-[ngClass]="{
-
-'ontime': item.status=='On Time',
-
-'late': item.status=='Late Entry',
-
-'absent': item.status=='Absent',
-
-'halfday': item.status=='Half Day'
-
-}">
-
 {{item.status}}
 
 </span>
 
 </td>
 
-</span>
-
-</td>
 </tr>
 
 
-<tr *ngIf="paginatedData.length==0">
+
+<tr
+*ngIf=
+"paginatedData.length==0">
 
 <td colspan="8">
 
@@ -198,8 +263,13 @@ No Records Found ❌
 
 </tr>
 
+
 </tbody>
+
 </table>
+
+
+
 <div class="pagination">
 
 <button
@@ -209,6 +279,7 @@ No Records Found ❌
 
 </button>
 
+
 <span>
 
 Page
@@ -217,6 +288,7 @@ of
 {{totalPages}}
 
 </span>
+
 
 <button
 (click)="nextPage()">

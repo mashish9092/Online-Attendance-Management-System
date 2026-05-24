@@ -4,59 +4,67 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-activity-history',
-  templateUrl: './activity-history.component.html',
-  styleUrls: ['./activity-history.component.css']
+selector: 'app-activity-history',
+templateUrl: './activity-history.component.html',
+styleUrls: ['./activity-history.component.css']
 })
 export class ActivityHistoryComponent implements OnInit {
 
-  activityList:any[]=[];
-  filteredList:any[]=[];
-baseUrl = environment.baseUrl;
-  searchText='';
+activityList:any[]=[];
+filteredList:any[]=[];
 
-  loading=false;
+baseUrl=environment.baseUrl;
 
-  selectedDate='';
+searchText='';
+
+loading=false;
+
+selectedDate='';
 
 selectedStatus='';
+
 currentPage=1;
 
 pageSize=5;
 
-  constructor(
-    private http:HttpClient,
-    private router:Router
-  ){}
 
-  ngOnInit(){
-
-    this.loadAllActivity();
-
-  }
+constructor(
+private http:HttpClient,
+private router:Router
+){}
 
 
+ngOnInit(){
+
+this.loadAllActivity();
+
+}
+
+
+// LOAD API DATA
 loadAllActivity(){
 
 this.loading=true;
 
-this.http
-.get<any[]>(
+this.http.get<any[]>(
 `${this.baseUrl}/activity/all`
 )
-
 .subscribe({
 
 next:(res)=>{
 
 console.log(
-"Activity Data:",
+'Activity Data:',
 res
 );
 
-this.activityList=res;
+this.activityList=
+res || [];
 
-this.filteredList=res;
+this.filteredList=
+[...this.activityList];
+
+this.currentPage=1;
 
 this.loading=false;
 
@@ -65,9 +73,13 @@ this.loading=false;
 error:(err)=>{
 
 console.log(
-"API ERROR:",
+'API ERROR:',
 err
 );
+
+this.activityList=[];
+
+this.filteredList=[];
 
 this.loading=false;
 
@@ -78,58 +90,84 @@ this.loading=false;
 }
 
 
-// 🔍 SEARCH
+
+// SEARCH
 search(){
 
 this.applyFilters();
 
 }
 
+
+// FILTER
 applyFilters(){
 
-this.filteredList =
+this.filteredList=
 this.activityList.filter(x=>{
 
-// Date filter
-const itemDate =
+// DATE
+const itemDate=
+x.time
+?
 new Date(x.time)
 .toISOString()
-.split('T')[0];
+.split('T')[0]
+:
+'';
 
-const dateMatch =
-!this.selectedDate ||
-itemDate===this.selectedDate;
+const dateMatch=
+!this.selectedDate
+||
+itemDate===
+this.selectedDate;
 
 
-// Status filter
+// STATUS
 const statusMatch=
-!this.selectedStatus ||
-x.status===this.selectedStatus;
+!this.selectedStatus
+||
+x.status===
+this.selectedStatus;
 
 
-// Search
+// SEARCH TEXT
 const search=
-this.searchText?.toLowerCase() || '';
+this.searchText
+?.toLowerCase()
+.trim()
+|| '';
 
 const searchMatch=
 
-x.name?.toLowerCase().includes(search)
+(x.name || '')
+.toLowerCase()
+.includes(search)
 
 ||
 
-x.status?.toLowerCase().includes(search)
+(x.status || '')
+.toLowerCase()
+.includes(search)
 
 ||
 
+(x.time
+?
 new Date(x.time)
 .toLocaleDateString()
 .toLowerCase()
-.includes(search);
+.includes(search)
+:
+false);
 
 
-return dateMatch &&
-statusMatch &&
-searchMatch;
+return(
+dateMatch
+&&
+statusMatch
+&&
+searchMatch
+);
 
 });
 
@@ -137,32 +175,40 @@ this.currentPage=1;
 
 }
 
+
+
+// PAGINATION
 get paginatedData(){
 
 const start=
 (this.currentPage-1)
-*this.pageSize;
+*
+this.pageSize;
 
 return this.filteredList.slice(
 start,
-start+this.pageSize
+start+
+this.pageSize
 );
 
 }
+
 
 get totalPages(){
 
 return Math.ceil(
 this.filteredList.length/
 this.pageSize
-);
+) || 1;
 
 }
+
 
 nextPage(){
 
 if(
-this.currentPage<
+this.currentPage
+<
 this.totalPages
 ){
 
@@ -171,6 +217,7 @@ this.currentPage++;
 }
 
 }
+
 
 prevPage(){
 
@@ -183,6 +230,10 @@ this.currentPage--;
 }
 
 }
+
+
+
+// RESET
 resetFilters(){
 
 this.selectedDate='';
@@ -191,12 +242,16 @@ this.selectedStatus='';
 
 this.searchText='';
 
-this.filteredList=[...this.activityList];
+this.filteredList=
+[...this.activityList];
 
 this.currentPage=1;
 
 }
 
+
+
+// BACK
 goBack(){
 
 this.router.navigate(

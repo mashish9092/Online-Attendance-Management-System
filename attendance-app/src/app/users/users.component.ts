@@ -6,481 +6,481 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+selector:'app-users',
+templateUrl:'./users.component.html',
+styleUrls:['./users.component.css']
 })
+
 export class UsersComponent implements OnInit {
-  apiUrl = `${environment.baseUrl}/Users`;
 
-  constructor(private http: HttpClient, private toastr:ToastrService) {}
+apiUrl=`${environment.baseUrl}/Users`;
 
-  searchText = '';
-
-  users: any[] = [];
-
-  user: any = {};
-
-  isEdit = false;
-
-  loading = false;
-
-  ngOnInit(): void {
-
-    this.resetForm();
-
-    this.loadUsers();
-
-  }
+constructor(
+private http:HttpClient,
+private toastr:ToastrService
+){}
 
 
-  resetForm() {
+searchText='';
 
-    this.user = {
-      name: '',
-      email: '',
-      password: '',
-      role: ''
-    };
+users:any[]=[];
 
-  }
+loading=false;
 
+isEdit=false;
 
-  loadUsers() {
-
-    this.loading = true;
-
-    this.http.get<any[]>(this.apiUrl)
-      .subscribe({
-
-        next: (res) => {
-
-          this.users = res || [];
-
-          this.loading = false;
-
-        },
-
-        error: (err) => {
-
-          console.log(err);
-
-          this.loading = false;
-
-        }
-
-      });
-
-  }
+showPopup=false;
 
 
-  // SEARCH
-  filteredUsers() {
+user:any={
 
-    return this.users.filter(x =>
+userId:0,
+name:'',
+email:'',
+password:'',
+role:''
 
-      (x.name || '')
-      .toLowerCase()
-      .includes(
-        this.searchText.toLowerCase()
-      )
-
-    );
-
-  }
+};
 
 
-  // EXPORT
-exportToExcel() {
+ngOnInit():void{
 
-const users = this.filteredUsers();
+this.resetForm();
 
-if(users.length===0){
+this.loadUsers();
+
+}
+
+
+
+/* popup */
+
+openPopup(){
+
+this.resetForm();
+
+this.isEdit=false;
+
+this.showPopup=false;
+
+setTimeout(()=>{
+
+this.showPopup=true;
+
+},50);
+
+}
+
+
+
+closePopup(){
+
+this.showPopup=false;
+
+this.isEdit=false;
+
+this.resetForm();
+
+this.user=null;
+
+setTimeout(()=>{
+
+this.user={
+
+userId:0,
+name:'',
+email:'',
+password:'',
+role:''
+
+};
+
+this.loadUsers();
+
+},200);
+
+}
+
+/* reset form */
+
+resetForm(){
+
+this.user={
+
+userId:0,
+name:'',
+email:'',
+password:'',
+role:''
+
+};
+
+}
+
+
+/* load users */
+
+loadUsers(){
+
+this.loading=true;
+
+this.http
+.get<any[]>(this.apiUrl)
+
+.subscribe({
+
+next:(res)=>{
+
+this.users=[...(res || [])]; // new reference force
+
+this.loading=false;
+
+},
+
+error:(err)=>{
+
+console.log(err);
+
+this.loading=false;
+
+this.toastr.error(
+'Users Load Failed',
+'Error'
+);
+
+}
+
+});
+
+}
+
+
+
+/* search */
+
+filteredUsers(){
+
+return this.users.filter(x=>
+
+(x.name || '')
+.toLowerCase()
+.includes(
+this.searchText.toLowerCase()
+)
+
+||
+
+(x.email || '')
+.toLowerCase()
+.includes(
+this.searchText.toLowerCase()
+)
+
+||
+
+(x.role || '')
+.toLowerCase()
+.includes(
+this.searchText.toLowerCase()
+)
+
+);
+
+}
+
+
+
+/* save + update */
+
+saveUser(){
+
+if(
+
+!this.user.name ||
+!this.user.email ||
+!this.user.password ||
+!this.user.role
+
+){
 
 this.toastr.warning(
-'No data available',
-'Warning'
-);
-
-return;
-}
-const workbook = new ExcelJS.Workbook();
-
-const today = new Date();
-
-const date =
-today.toLocaleDateString('en-GB')
-.replace(/\//g,'-');
-
-const worksheet =
-workbook.addWorksheet(
-`Users`
-);
-
-
-// Title
-worksheet.mergeCells('A1:F1');
-
-const titleCell =
-worksheet.getCell('A1');
-
-titleCell.value =
-'Online Employee Attendance System';
-
-titleCell.font={
-size:18,
-bold:true,
-color:{argb:'FFFFFF'}
-};
-
-titleCell.alignment={
-vertical:'middle',
-horizontal:'center'
-};
-
-titleCell.fill={
-type:'pattern',
-pattern:'solid',
-fgColor:{argb:'1F4E78'}
-};
-
-worksheet.getRow(1).height=30;
-
-
-// Subtitle
-
-worksheet.mergeCells('A2:F2');
-
-worksheet.getCell('A2').value=
-`Admin Manage Users Report (${date})`;
-
-worksheet.getCell('A2').font={
-bold:true,
-size:13
-};
-
-worksheet.getCell('A2').alignment={
-horizontal:'center'
-};
-
-
-// Count
-
-const adminCount =
-users.filter(
-x=>x.role==="Admin"
-).length;
-
-const userCount =
-users.filter(
-x=>x.role==="User"
-).length;
-
-
-worksheet.mergeCells('A4:B4');
-worksheet.mergeCells('C4:D4');
-worksheet.mergeCells('E4:F4');
-
-worksheet.getCell('A4').value=
-`Total Users : ${users.length}`;
-
-worksheet.getCell('C4').value=
-`Admins : ${adminCount}`;
-
-worksheet.getCell('E4').value=
-`Users : ${userCount}`;
-
-// Count row border + style
-
-['A4','C4','E4'].forEach(cellNo=>{
-
-const cell = worksheet.getCell(cellNo);
-
-cell.font = {
-bold:true
-};
-
-cell.alignment = {
-horizontal:'center',
-vertical:'middle'
-};
-
-cell.fill = {
-type:'pattern',
-pattern:'solid',
-fgColor:{argb:'D9EAD3'}
-};
-
-cell.border={
-
-top:{style:'thin'},
-left:{style:'thin'},
-bottom:{style:'thin'},
-right:{style:'thin'}
-
-};
-
-});
-
-worksheet.getRow(6).values=[
-'Sr No',
-'Name',
-'Email',
-'Role'
-];
-
-
-// Header color
-
-worksheet.getRow(6).eachCell(cell=>{
-
-cell.font={
-bold:true,
-color:{argb:'FFFFFF'}
-};
-
-cell.fill={
-
-type:'pattern',
-pattern:'solid',
-fgColor:{argb:'28A745'}
-
-};
-
-cell.alignment={
-
-horizontal:'center',
-vertical:'middle'
-
-};
-
-cell.border={
-
-top:{style:'thin'},
-left:{style:'thin'},
-bottom:{style:'thin'},
-right:{style:'thin'}
-
-};
-
-});
-
-
-
-// Data rows
-
-users.forEach(
-(u:any,index:number)=>{
-
-const row=
-worksheet.addRow([
-
-index+1,
-u.name,
-u.email,
-u.role
-
-]);
-
-row.eachCell(cell=>{
-
-cell.border={
-
-top:{style:'thin'},
-left:{style:'thin'},
-bottom:{style:'thin'},
-right:{style:'thin'}
-
-};
-
-cell.alignment={
-horizontal:'center'
-};
-
-});
-
-});
-    
-
-worksheet.columns=[
-
-{width:10},
-{width:25},
-{width:35},
-{width:20}
-
-];
-
-
-
-workbook.xlsx
-.writeBuffer()
-.then((data)=>{
-
-const blob=
-new Blob(
-[data],
-{
-type:
-'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-}
-);
-
-FileSaver.saveAs(
-blob,
-`Admin_Manage_Users_${date}.xlsx`
-);
-this.toastr.success(
-'Excel Exported Successfully',
-'Success'
-);
-});
-
-}
-  saveUser() {
-
-    if (
-      !this.user.name ||
-      !this.user.email ||
-      !this.user.password ||
-      !this.user.role
-    ) {
-
-    this.toastr.warning(
 'Fill all fields',
 'Warning'
 );
 
-    }
+return;
+
+}
 
 
-    if (this.isEdit) {
+const request=this.isEdit
 
-      this.http.put(
-        `${this.apiUrl}/${this.user.userId}`,
-        this.user
-      )
-      .subscribe({
+?
 
-        next: () => {
+this.http.put(
+`${this.apiUrl}/${this.user.userId}`,
+this.user
+)
 
-        this.toastr.success(
-'Updated Successfully',
+:
+
+this.http.post(
+this.apiUrl,
+this.user
+);
+
+
+request.subscribe({
+
+next:(res:any)=>{
+
+this.toastr.success(
+
+this.isEdit
+?
+'Updated Successfully'
+:
+'User Added Successfully',
+
 'Success'
 );
 
-          this.resetForm();
 
-          this.isEdit = false;
+/* force fresh load */
 
-          this.loadUsers();
+this.http
+.get<any[]>(this.apiUrl)
+.subscribe(data=>{
 
-        },
+this.users=[...data];
 
-        error: (err) => {
+this.closePopup();
 
-          console.log(err);
+});
 
-        this.toastr.error(
-'Update Failed',
+},
+
+error:(err)=>{
+
+console.log(err);
+
+this.toastr.error(
+
+'Save Failed',
+
 'Error'
+
 );
 
-        }
+}
 
-      });
+});
 
-    }
-
-    else {
-
-      this.http.post(
-        this.apiUrl,
-        this.user
-      )
-      .subscribe({
-
-        next: () => {
-
-       this.toastr.success(
-'User Saved Successfully',
-'Success'
-);
-
-          // form clear
-          this.resetForm();
-
-          // edit off
-          this.isEdit = false;
-
-          // table reload
-          this.loadUsers();
-
-        },
-
-        error: (err) => {
-
-          console.log(err);
-
-          this.toastr.error(
-'Database Save Failed',
-'Error'
-);
-
-        }
-
-      });
-
-    }
-
-  }
+}
 
 
 
-  editUser(u: any) {
+/* edit */
 
-    this.user = Object.assign({}, u);
+editUser(u:any){
 
-    this.isEdit = true;
+this.user={
 
-  }
+userId:u.userId,
+
+name:u.name || '',
+
+email:u.email || '',
+
+password:'',   // force blank
+
+role:u.role || ''
+
+};
+
+this.isEdit=true;
+
+this.showPopup=true;
+
+}
 
 
+/* delete */
 
-  deleteUser(id: any) {
+deleteUser(id:number){
 
-    if (confirm("Delete this user?")) {
+if(!confirm(
+'Delete this user ?'
+))
+return;
 
-      this.loading = true;
+this.loading=true;
 
-      this.http.delete(
-        `${this.apiUrl}/${id}`
-      )
-      .subscribe({
+this.http.delete(
 
-        next: () => {
+`${this.apiUrl}/${id}`,
 
-         this.toastr.success(
+{ responseType:'text' }
+
+)
+
+.subscribe({
+
+next:(res)=>{
+
+console.log(res);
+
+this.toastr.success(
+
 'Deleted Successfully',
+
 'Success'
+
 );
 
-          this.loadUsers();
+this.users=
+this.users.filter(
+x=>x.userId!==id
+);
 
-        },
+this.loading=false;
 
-        error: (err) => {
+},
 
-          console.log(err);
+error:(err)=>{
 
-          this.loading = false;
+console.log(err);
 
-        }
+this.loading=false;
 
-      });
+this.toastr.error(
 
-    }
+'Delete Failed',
 
-  }
+'Error'
+
+);
+
+}
+
+});
+
+}
+
+/* excel */
+
+exportToExcel(){
+
+const users=this.filteredUsers();
+
+if(users.length===0){
+
+this.toastr.warning(
+
+'No data available',
+
+'Warning'
+
+);
+
+return;
+
+}
+
+
+const workbook=
+new ExcelJS.Workbook();
+
+const worksheet=
+workbook.addWorksheet(
+'Users'
+);
+
+
+worksheet.columns=[
+
+{
+header:'Sr No',
+key:'sr',
+width:10
+},
+
+{
+header:'Name',
+key:'name',
+width:25
+},
+
+{
+header:'Email',
+key:'email',
+width:35
+},
+
+{
+header:'Role',
+key:'role',
+width:20
+}
+
+];
+
+
+users.forEach((u,index)=>{
+
+worksheet.addRow({
+
+sr:index+1,
+
+name:u.name,
+
+email:u.email,
+
+role:u.role
+
+});
+
+});
+
+
+workbook.xlsx
+.writeBuffer()
+
+.then(data=>{
+
+const blob=
+new Blob(
+
+[data],
+
+{
+
+type:
+'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+}
+
+);
+
+FileSaver.saveAs(
+
+blob,
+
+'Users.xlsx'
+
+);
+
+
+this.toastr.success(
+
+'Excel Exported',
+
+'Success'
+
+);
+
+});
+
+}
 
 }

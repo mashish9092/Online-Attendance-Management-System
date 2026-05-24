@@ -1,72 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../services/user.service';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { UsersComponent } from './users.component';
 
-@Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']
+describe('UsersComponent', () => {
+
+let component: UsersComponent;
+let fixture: ComponentFixture<UsersComponent>;
+
+beforeEach(async () => {
+
+await TestBed.configureTestingModule({
+
+declarations:[UsersComponent]
+
 })
-export class UsersComponent implements OnInit {
+.compileComponents();
 
-  constructor(private userService: UserService) {}
+fixture=
+TestBed.createComponent(
+UsersComponent
+);
 
-  searchText = '';
-  users: any[] = [];
-  user: any = {};
-  isEdit = false;
+component=
+fixture.componentInstance;
 
-  ngOnInit() {
-    this.getUsers();
-  }
+fixture.detectChanges();
 
-  // 🔥 GET USERS FROM API
-  getUsers() {
-    this.userService.getUsers().subscribe(res => {
-      this.users = res;
-    });
-  }
+});
 
-  // 🔍 SEARCH
-  filteredUsers() {
-    return this.users.filter(x =>
-      x.name.toLowerCase().includes(this.searchText.toLowerCase())
-    );
-  }
+it('should create',()=>{
 
-  // ➕ ADD / UPDATE
-  saveUser() {
+expect(component)
+.toBeTruthy();
 
-    if (!this.user.name || !this.user.email) {
-      alert('Fill all fields');
-      return;
-    }
+});
 
-    if (this.isEdit) {
-      this.userService.updateUser(this.user).subscribe(() => {
-        this.getUsers();
-      });
-    } else {
-      this.userService.addUser(this.user).subscribe(() => {
-        this.getUsers();
-      });
-    }
-
-    this.user = {};
-    this.isEdit = false;
-  }
-
-  // ✏️ EDIT
-  editUser(u: any) {
-    this.user = { ...u };
-    this.isEdit = true;
-  }
-
-  // 🗑️ DELETE
-  deleteUser(id: number) {
-    if (confirm('Delete this user?')) {
-      this.userService.deleteUser(id).subscribe(() => {
-        this.getUsers();
-      });
-    }
-  }
-}
+});
