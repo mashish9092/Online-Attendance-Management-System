@@ -1,11 +1,9 @@
 .report-container{
-
 padding:25px;
-
 }
 
 
-/* HEADER */
+/* ================= HEADER ================= */
 
 .report-header{
 
@@ -13,7 +11,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 
-margin-bottom:20px;
+margin-bottom:25px;
 
 }
 
@@ -26,7 +24,8 @@ color:#1e3a8a;
 }
 
 
-/* FILTER */
+
+/* ================= FILTER ================= */
 
 .filter-box{
 
@@ -51,11 +50,10 @@ box-shadow:
 
 }
 
-
 .filter-box input,
 .filter-box select{
 
-padding:12px;
+padding:12px 15px;
 
 border:1px solid #ddd;
 
@@ -67,8 +65,9 @@ min-width:180px;
 
 transition:.3s;
 
-}
+font-size:14px;
 
+}
 
 .filter-box input:focus,
 .filter-box select:focus{
@@ -82,12 +81,11 @@ box-shadow:
 
 
 
-/* BUTTONS */
+/* ================= BUTTONS ================= */
 
 .search-btn{
 
 background:#2563eb;
-
 color:white;
 
 border:none;
@@ -127,6 +125,8 @@ padding:11px 18px;
 border-radius:10px;
 
 cursor:pointer;
+
+font-weight:600;
 
 transition:.3s;
 
@@ -172,7 +172,8 @@ transform:translateY(-2px);
 
 
 
-/* TABLE CARD */
+
+/* ================= TABLE CARD ================= */
 
 .table-box{
 
@@ -191,7 +192,8 @@ overflow:auto;
 
 
 
-/* TABLE */
+
+/* ================= TABLE ================= */
 
 .report-table{
 
@@ -199,13 +201,14 @@ width:100%;
 
 border-collapse:collapse;
 
-border:1px solid #e5e7eb;
-
 overflow:hidden;
 
 border-radius:12px;
 
+border:1px solid #e5e7eb;
+
 }
+
 
 
 
@@ -217,16 +220,15 @@ background:#1f2937;
 
 }
 
-
 .report-table th{
-
-color:white;
 
 padding:16px;
 
-text-align:center;
+color:white;
 
 font-weight:600;
+
+text-align:center;
 
 border:1px solid #374151;
 
@@ -234,7 +236,8 @@ border:1px solid #374151;
 
 
 
-/* DATA CELLS */
+
+/* TABLE DATA */
 
 .report-table td{
 
@@ -250,7 +253,8 @@ transition:.3s;
 
 
 
-/* ZEBRA ROWS */
+
+/* ALTERNATE ROWS */
 
 .report-table tbody tr:nth-child(even){
 
@@ -260,7 +264,8 @@ background:#fafafa;
 
 
 
-/* HOVER */
+
+/* HOVER EFFECT */
 
 .report-table tbody tr{
 
@@ -270,55 +275,57 @@ transition:.3s;
 
 }
 
-
 .report-table tbody tr:hover{
 
 background:#eff6ff;
 
-transform:scale(1.002);
+transform:scale(1.001);
 
 box-shadow:
-0 2px 8px rgba(0,0,0,.06);
+0 2px 8px rgba(0,0,0,.05);
 
 }
 
 
 
-/* STATUS */
 
-/* .late{
-color:#ef4444 !important;
-font-weight:700 !important;
-}
+/* ================= STATUS ================= */
 
 .ontime{
-color:#16a34a !important;
-font-weight:700 !important;
-} */
- .report-table .late{
-color:#ff0000 !important;
-font-weight:700 !important;
-}
 
-.report-table .ontime{
-color:#00a63e !important;
-font-weight:700 !important;
-}
+color:#16a34a;
+font-weight:700;
 
-/* Jo status normal aa raha tha us ke liye */
-.report-table td .ontime{
-color:#16a34a !important;
-font-weight:bold !important;
-}
-
-.report-table td .late{
-color:#ef4444 !important;
-font-weight:bold !important;
 }
 
 
+.late{
 
-/* NO RECORD */
+color:#ef4444;
+font-weight:700;
+
+}
+
+
+.absent{
+
+color:#dc2626;
+font-weight:700;
+
+}
+
+
+.halfday{
+
+color:#f59e0b;
+font-weight:700;
+
+}
+
+
+
+
+/* ================= EMPTY DATA ================= */
 
 .report-table td[colspan]{
 
@@ -331,6 +338,12 @@ font-weight:600;
 color:#6b7280;
 
 }
+
+
+
+
+/* ================= PAGINATION ================= */
+
 .pagination{
 
 display:flex;
@@ -341,14 +354,13 @@ align-items:center;
 
 gap:15px;
 
-margin-top:20px;
+margin-top:25px;
 
 }
 
-
 .pagination button{
 
-padding:8px 16px;
+padding:10px 16px;
 
 border:none;
 
@@ -360,7 +372,25 @@ color:white;
 
 cursor:pointer;
 
+font-weight:600;
+
+transition:.3s;
+
 }
+
+.pagination button:hover{
+
+background:#1d4ed8;
+
+transform:translateY(-2px);
+
+}
+
+
+
+
+/* ================= LOADER ================= */
+
 .loading-container{
 
 height:300px;
@@ -406,11 +436,49 @@ color:#6b7280;
 }
 
 
+
+
 @keyframes spin{
 
 100%{
 
 transform:rotate(360deg);
+
+}
+
+}
+
+
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+.filter-box{
+
+flex-direction:column;
+align-items:stretch;
+
+}
+
+.filter-box input,
+.filter-box select{
+
+width:100%;
+
+}
+
+.report-header{
+
+flex-direction:column;
+gap:15px;
+
+}
+
+.report-header h2{
+
+font-size:24px;
 
 }
 

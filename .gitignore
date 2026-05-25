@@ -50,3 +50,9 @@ Thumbs.db
 .vs/
 bin/
 obj/
+
+node_modules/
+attendance-app/node_modules/
+bin/
+obj/
+*.user

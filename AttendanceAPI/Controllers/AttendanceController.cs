@@ -40,28 +40,23 @@ namespace AttendanceAPI.Controllers
       .FirstOrDefault();
 
       // Previous date checkout miss
-      if (
-        previousAttendance != null &&
-        previousAttendance.Date.Date < today
-      )
+      if (previousAttendance != null &&
+    previousAttendance.CheckInTime.HasValue)
       {
         previousAttendance.CheckOutTime =
-        previousAttendance.Date.Date
-        .AddHours(23)
-        .AddMinutes(59)
-        .AddSeconds(59);
+            previousAttendance.Date.Date
+            .AddHours(23)
+            .AddMinutes(59)
+            .AddSeconds(59);
 
-        var duration =
-        previousAttendance.CheckOutTime.Value
-        -
-        previousAttendance.CheckInTime.Value;
+        TimeSpan duration =
+            previousAttendance.CheckOutTime.Value -
+            previousAttendance.CheckInTime.Value;
 
         previousAttendance.WorkingHours =
-        (decimal)
-        duration.TotalMinutes / 60;
+            (decimal)duration.TotalHours;
 
-        previousAttendance.Status =
-        "Missed Checkout";
+        previousAttendance.Status = "Missed Checkout";
       }
 
       // Today already open
@@ -158,11 +153,19 @@ namespace AttendanceAPI.Controllers
       _context.SaveChanges();
       if (user != null)
       {
-        await _telegram.SendMessage(
 
-    $"✅ Employee Check-In\n\n👤 Name: {user.Name}\n⏰ Time: {DateTime.Now:hh:mm tt}"
+    await _telegram.SendMessage(
 
-        );
+$@"✅ Employee Check-In
+
+👤 Name: {user.Name}
+
+⏰ Check In: {DateTime.Now:hh:mm tt}
+
+📌 Status: {(isLate ? "Late" : "On Time")}
+
+📅 Date: {DateTime.Now:dd-MM-yyyy}"
+);
       }
 
       return Ok(new
@@ -181,7 +184,7 @@ namespace AttendanceAPI.Controllers
 
     // CHECK-OUT API
     [HttpPost("checkout")]
-    public IActionResult CheckOut([FromBody] int userId)
+    public async Task<IActionResult> CheckOut([FromBody] int userId)
     {
       if (userId == 0)
         return BadRequest("UserId not received");
@@ -295,6 +298,25 @@ namespace AttendanceAPI.Controllers
       }
 
       _context.SaveChanges();
+      if (user != null)
+      {
+        await _telegram.SendMessage(
+
+    $@"🔴 Employee Check-Out
+
+👤 Name: {user.Name}
+
+🕘 Check In: {attendance.CheckInTime:hh:mm tt}
+
+🕕 Check Out: {attendance.CheckOutTime:hh:mm tt}
+
+⏱ Working Hours: {duration:hh\:mm}
+
+📌 Status: {attendance.Status}
+
+📅 Date: {DateTime.Now:dd-MM-yyyy}"
+        );
+      }
 
       return Ok(new
       {
@@ -685,5 +707,56 @@ int year)
 
             return Ok(data);
         }
-    } 
+    [HttpGet("all")]
+    public IActionResult GetAllAttendance()
+    {
+      var data =
+
+      _context.Attendances
+
+      .Join(
+          _context.Users,
+
+          a => a.UserId,
+          u => u.UserId,
+
+          (a, u) => new
+          {
+            name = u.Name,
+
+            date = a.Date,
+
+            checkInTime = a.CheckInTime,
+
+            checkOutTime = a.CheckOutTime,
+
+            workingHours =
+
+              a.WorkingHours != null
+              ?
+
+              TimeSpan
+              .FromHours(
+                  (double)a.WorkingHours.Value
+              )
+              .ToString(@"hh\:mm")
+
+              :
+
+              "--",
+
+            isLate = a.IsLate,
+
+            status = a.Status
+          })
+
+      .OrderByDescending(
+          x => x.date
+      )
+
+      .ToList();
+
+      return Ok(data);
+    }
+  } 
 }

@@ -40,7 +40,6 @@ ngOnInit(){
 this.loadData();
 }
 
-
 loadData(){
 
 this.loading=true;
@@ -51,10 +50,32 @@ this.attendanceService
 
 next:(res:any)=>{
 
-this.data=res || [];
+console.log("API DATA =",res);
+
+this.data = res || [];
+
+
+// current month default load
+const currentMonth=
+new Date().getMonth();
+
+const currentYear=
+new Date().getFullYear();
 
 this.filteredData=
-[...this.data];
+this.data.filter((x:any)=>{
+
+const d=new Date(x.date);
+
+return (
+d.getMonth()===currentMonth
+&&
+d.getFullYear()===currentYear
+);
+
+});
+
+this.currentPage=1;
 
 this.updatePagination();
 
@@ -64,7 +85,7 @@ this.loading=false;
 
 error:(err:any)=>{
 
-console.log(err);
+console.log("API ERROR",err);
 
 this.loading=false;
 
@@ -73,6 +94,7 @@ this.loading=false;
 });
 
 }
+
 updatePagination(){
 
 this.totalPages=
@@ -128,66 +150,135 @@ this.updatePagination();
 }
 
 }
-search() {
 
-this.filteredData =
-this.data.filter((x:any)=>{
+search(){
 
-// Name search
-const nameMatch =
-!this.searchText ||
-x.name?.toLowerCase()
-.includes(
-this.searchText.toLowerCase()
-);
+let temp=[...this.data];
 
 
-// Status search
-let statusMatch=true;
+// Date Range filter
+if(this.fromDate && this.toDate){
 
-if(this.status==="Late Entry"){
-statusMatch=x.isLate==1;
-}
-else if(this.status==="On Time"){
-statusMatch=x.isLate==0;
-}
+temp=temp.filter((x:any)=>{
 
-
-// API date → yyyy-mm-dd
-const rowDate =
-x.date
-? new Date(x.date)
+const rowDate=
+new Date(x.date)
 .toISOString()
-.split('T')[0]
-: "";
-
-
-// Input date compare
-const fromMatch =
-!this.fromDate ||
-rowDate >= this.fromDate;
-
-const toMatch =
-!this.toDate ||
-rowDate <= this.toDate;
-
+.split('T')[0];
 
 return (
-nameMatch &&
-statusMatch &&
-fromMatch &&
-toMatch
+rowDate>=this.fromDate
+&&
+rowDate<=this.toDate
 );
 
 });
+
+}
+
+
+// Search Name + Date + Status
+
+if(this.searchText){
+
+const text=
+this.searchText.toLowerCase();
+
+temp=temp.filter((x:any)=>{
+
+const name=
+x.name?.toLowerCase() || "";
+
+const date=
+new Date(x.date)
+.toLocaleDateString()
+.toLowerCase();
+
+const status=
+(x.status || "")
+.toLowerCase();
+
+return (
+
+name.includes(text)
+
+||
+
+date.includes(text)
+
+||
+
+status.includes(text)
+
+);
+
+});
+
+}
+
+
+
+// Status dropdown
+
+if(this.status){
+
+switch(this.status){
+
+case "On Time":
+
+temp=temp.filter(
+(x:any)=>
+x.status=="Present"
+);
+
+break;
+
+
+case "Late Entry":
+
+temp=temp.filter(
+(x:any)=>
+x.status=="Late"
+);
+
+break;
+
+
+case "Half Day":
+
+temp=temp.filter(
+(x:any)=>
+x.status=="Half Day"
+);
+
+break;
+
+
+case "Absent":
+
+temp=temp.filter(
+(x:any)=>
+x.status=="Absent"
+);
+
+break;
+
+}
+
+}
+
+
+this.filteredData=temp;
+
+this.currentPage=1;
+
+this.updatePagination();
 
 console.log(
 "Filtered Data:",
 this.filteredData
 );
-this.currentPage=1;
 
-this.updatePagination();
 }
 
 
@@ -212,8 +303,34 @@ this.fromDate='';
 
 this.toDate='';
 
+
+// current month reload
+const currentMonth=
+new Date().getMonth();
+
+const currentYear=
+new Date().getFullYear();
+
 this.filteredData=
-[...this.data];
+this.data.filter((x:any)=>{
+
+const d=
+new Date(x.date);
+
+return (
+
+d.getMonth()===currentMonth
+&&
+d.getFullYear()===currentYear
+
+);
+
+});
+
+
+this.currentPage=1;
+
+this.updatePagination();
 
 }
 
@@ -235,7 +352,7 @@ workbook.addWorksheet(
 
 // ================= TITLE =================
 
-worksheet.mergeCells('A1:G2');
+worksheet.mergeCells('A1:H2');
 
 const title=
 worksheet.getCell('A1');
@@ -275,51 +392,72 @@ argb:'1E3A8A'
 const total=
 this.filteredData.length;
 
+
 const late=
 this.filteredData.filter(
-(x:any)=>x.isLate==1
+(x:any)=>x.status=="Late"
+||
+x.status=="Late Entry"
 ).length;
 
 
 const onTime=
 this.filteredData.filter(
-(x:any)=>x.isLate==0
+(x:any)=>x.status=="Present"
+||
+x.status=="On Time"
+).length;
+
+
+const halfDay=
+this.filteredData.filter(
+(x:any)=>x.status=="Half Day"
 ).length;
 
 
 const absent=
-total-(late+onTime);
+this.filteredData.filter(
+(x:any)=>x.status=="Absent"
+).length;
 
 
 const presentPercent=
 Math.round(
-(onTime/total)*100 ||0
+((onTime+late+halfDay)
+/total)*100
+||0
 );
 
 
 const absentPercent=
-100-presentPercent;
+Math.round(
+(absent/total)*100
+||0
+);
 
 
 worksheet.addRow([]);
 
 worksheet.addRow([
 
-'Total Records',
+'Total',
 total,
 
-'Late Count',
-late,
-
-'On Time',
+'Present',
 onTime,
 
-'Absent',
-absent
+'Late',
+late,
+
+'Half Day',
+halfDay
 
 ]);
 
 worksheet.addRow([
+
+'Absent',
+absent,
 
 'Present %',
 presentPercent+'%',
@@ -375,6 +513,7 @@ right:{style:'thin'}
 });
 
 
+
 // ================= HEADER =================
 
 worksheet.addRow([]);
@@ -421,10 +560,10 @@ vertical:'middle'
 };
 
 
-// column widths
+// widths
 
 worksheet.getColumn(1).width=10;
-worksheet.getColumn(2).width=25;
+worksheet.getColumn(2).width=30;
 worksheet.getColumn(3).width=18;
 worksheet.getColumn(4).width=18;
 worksheet.getColumn(5).width=18;
@@ -432,10 +571,23 @@ worksheet.getColumn(6).width=18;
 worksheet.getColumn(7).width=18;
 
 
+
 // ================= DATA =================
 
 this.filteredData.forEach(
 (x:any,i:number)=>{
+
+
+const statusValue=
+x.status ||
+(
+x.isLate==1
+?
+'Late Entry'
+:
+'Present'
+);
+
 
 const row=
 worksheet.addRow([
@@ -467,38 +619,47 @@ x.checkOutTime
 x.workingHours
 || '--',
 
-x.isLate==1
-?
-'Late Entry'
-:
-'On Time'
+statusValue
 
 ]);
 
 
-// Status color
+
+// status color
 
 const status=
 row.getCell(7);
+
+let color='008000';
+
+
+if(statusValue=="Late"
+||
+statusValue=="Late Entry")
+color='8B0000';
+
+
+if(statusValue=="Half Day")
+color='ffb327';
+
+
+if(statusValue=="Absent")
+color='FF0000';
+
 
 status.font={
 
 bold:true,
 
 color:{
-
-argb:
-x.isLate==1
-?
-'FF0000'
-:
-'008000'
-
+argb:color
 }
 
 };
 
 });
+
+
 
 
 // ================= BORDER =================
@@ -526,6 +687,8 @@ vertical:'middle'
 });
 
 });
+
+
 
 
 // ================= DOWNLOAD =================

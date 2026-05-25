@@ -1,63 +1,80 @@
 <div class="report-container">
 
+  <!-- HEADER -->
   <div class="report-header">
+
     <h2>📊 Attendance Reports</h2>
 
-    <button class="export-btn"
-    (click)="exportExcel()">
+    <button
+      class="export-btn"
+      (click)="exportExcel()">
 
       📗 Export Excel
 
     </button>
+
   </div>
 
 
-  <!-- FILTER SECTION -->
+  <!-- FILTER -->
 
   <div class="filter-box">
 
     <input
-type="date"
-[(ngModel)]="fromDate">
+      type="date"
+      [(ngModel)]="fromDate">
 
-<input
-type="date"
-[(ngModel)]="toDate">
+    <input
+      type="date"
+      [(ngModel)]="toDate">
 
-<input
-type="text"
-[(ngModel)]="searchText"
-(ngModelChange)="search()"
-placeholder="Search By Name & Date...">
 
-<select [(ngModel)]="status">
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (ngModelChange)="search()"
+      placeholder="Search Name / Date / Status">
 
-<option value="">
-All Status
-</option>
 
-<option value="On Time">
-On Time
-</option>
+    <select
+      [(ngModel)]="status">
 
-<option value="Late Entry">
-Late Entry
-</option>
+      <option value="">
+        All Status
+      </option>
 
-</select>
+      <option value="On Time">
+        On Time
+      </option>
+
+      <option value="Late Entry">
+        Late Entry
+      </option>
+
+      <option value="Half Day">
+        Half Day
+      </option>
+
+      <option value="Absent">
+        Absent
+      </option>
+
+    </select>
+
 
     <button
-    class="search-btn"
-    [disabled]="loading"
-    (click)="search()">
+      class="search-btn"
+      [disabled]="loading"
+      (click)="search()">
 
       🔎 Search
 
     </button>
 
+
     <button
-    class="reset-btn"
-    (click)="resetFilter()">
+      class="reset-btn"
+      (click)="resetFilter()">
 
       ↺ Reset
 
@@ -67,175 +84,162 @@ Late Entry
 
 
 
-  <!-- TABLE -->
+  <!-- TABLE CARD -->
 
- <div class="table-box">
+  <div class="table-box">
 
-<!-- LOADER -->
 
-<div *ngIf="loading"
-class="loading-container">
+    <!-- LOADER -->
 
-<div class="loader"></div>
+    <div
+      *ngIf="loading"
+      class="loading-container">
 
-<p>Loading Reports...</p>
+      <div class="loader"></div>
 
-</div>
+      <p>Loading Reports...</p>
 
+    </div>
 
-<!-- TABLE -->
 
-<table
-*ngIf="!loading"
-class="report-table">
 
-<thead>
+    <!-- TABLE -->
 
-<tr>
+    <table
+      *ngIf="!loading"
+      class="report-table">
 
-<th>Sr.No</th>
-<th>Name</th>
-<th>Date</th>
-<th>Check-In</th>
-<th>Check-Out</th>
-<th>Working Hours</th>
-<th>Status</th>
+      <thead>
 
-</tr>
+      <tr>
 
-</thead>
+        <th>Sr.No</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Check-In</th>
+        <th>Check-Out</th>
+        <th>Working Hours</th>
+        <th>Status</th>
 
-<tbody>
+      </tr>
 
-<tr *ngFor="
-let x of paginatedData;
-let i=index
-">
+      </thead>
 
-<td>
 
-{{((currentPage-1)
-*
-pageSize)+i+1}}
+      <tbody>
 
-</td>
+      <tr
+      *ngFor="
+      let x of paginatedData;
+      let i=index">
 
-<td>{{x.name}}</td>
+        <td>
+          {{((currentPage-1)*pageSize)+i+1}}
+        </td>
 
-<td>
+        <td>
+          {{x.name}}
+        </td>
 
-{{x.date
-| date:'MMM d,y'}}
+        <td>
+          {{x.date | date:'MMM d,y'}}
+        </td>
 
-</td>
+        <td>
+          {{x.checkInTime ?
+          (x.checkInTime | date:'shortTime')
+          : '--'}}
+        </td>
 
-<td>
+        <td>
+          {{x.checkOutTime ?
+          (x.checkOutTime | date:'shortTime')
+          : '--'}}
+        </td>
 
-{{x.checkInTime ?
+        <td>
+          {{(x.workingHours
+          ?? x.WorkingHours)
+          || '--'}}
+        </td>
 
-(x.checkInTime
-| date:'shortTime')
 
-:'--'}}
+        <!-- STATUS -->
 
-</td>
+        <td>
 
-<td>
+          <span
 
-{{x.checkOutTime ?
+          [class.ontime]="x.status=='Present'"
 
-(x.checkOutTime
-| date:'shortTime')
+          [class.late]="x.status=='Late'"
 
-:'--'}}
+          [class.absent]="x.status=='Absent'"
 
-</td>
+          [class.halfday]="x.status=='Half Day'">
 
-<td>
+          {{x.status}}
 
-{{(x.workingHours
-?? x.WorkingHours)
-|| '--'}}
+          </span>
 
-</td>
+        </td>
 
-<td>
+      </tr>
 
-<!-- <span
 
-[class.late]="x.isLate==1"
+      <tr
+      *ngIf="
+      paginatedData.length==0">
 
-[class.ontime]="x.isLate==0">
+        <td colspan="7">
 
-{{x.isLate==1 ?
+          📂 No Records Found
 
-'Late Entry' :
+        </td>
 
-'On Time'}}
+      </tr>
 
-</span> -->
-<span
-ngClass="{{x.isLate==1 ? 'late':'ontime'}}">
+      </tbody>
 
-{{x.isLate==1
-? 'Late Entry'
-: 'On Time'}}
+    </table>
 
-</span>
 
-</td>
 
-</tr>
+    <!-- PAGINATION -->
 
+    <div
+      *ngIf="!loading"
+      class="pagination">
 
-<tr *ngIf="paginatedData.length==0">
+      <button
+      (click)="prevPage()">
 
-<td colspan="7">
+        ⬅ Prev
 
-📂 No Records Found
+      </button>
 
-</td>
 
-</tr>
+      <span>
 
-</tbody>
+        Page
+        {{currentPage}}
 
-</table>
+        of
 
+        {{totalPages}}
 
-<!-- PAGINATION -->
+      </span>
 
-<div
-*ngIf="!loading"
-class="pagination">
 
-<button
-(click)="prevPage()">
+      <button
+      (click)="nextPage()">
 
-⬅ Prev
+        Next ➡
 
-</button>
+      </button>
 
-<span>
+    </div>
 
-Page
-{{currentPage}}
-
-of
-
-{{totalPages}}
-
-</span>
-
-<button
-(click)="nextPage()">
-
-Next ➡
-
-</button>
-
-</div>
-
-</div>
+  </div>
 
 </div>
